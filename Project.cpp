@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 using namespace std;
 
 struct Pasien{
@@ -8,6 +9,44 @@ struct Pasien{
     char ttl[20];
     char poli[50];
 };
+
+void lihatAntrian(){
+
+
+    FILE *file;
+    file = fopen("dataPasien.txt","r");
+
+    if (file == NULL)
+    {
+        cout << "File tidak ditemukan atau belum ada daftar antrian!" << endl;
+        return;
+    }
+
+    char line[500];
+    int nomorPasien = 0;
+    
+    cout << "\n===== DAFTAR ANTRIAN PASIEN =====\n";
+    
+    // Membaca file dan tampilkan langsung
+    while (fgets(line, sizeof(line), file) != NULL) {
+        // Jika menemukan baris "Nama:", berarti data pasien baru
+        if (strncmp(line, "Nama:", 5) == 0) {
+            nomorPasien++;
+            cout << "\nPasien " << nomorPasien << "." << endl;
+        }
+        
+        // Tampilkan baris data
+        cout << line;
+    }
+    
+    fclose(file);
+    
+    if (nomorPasien == 0) {
+        cout << "Belum ada data pasien yang tersimpan.\n";
+    }    
+
+    
+}
 
 void tambahPasien(){
     Pasien pasien;
@@ -23,7 +62,7 @@ void tambahPasien(){
     FILE *file;
     file    = fopen("dataPasien.txt","a"); // Append utk menambahkan data baru
     
-    if (file != NULL)
+    if (file == NULL)
     {
         cout << "Error Tidak dapat membuka File!" << endl;
         return;
@@ -49,15 +88,22 @@ int pilihan;
     do {
         cout << "\n===== MENU SISTEM MANAJEMEN PASIEN =====\n";
         cout << "1. Tambah Pasien\n";
-        cout << "0. Keluar\n";
+        cout << "2. Lihat Antrian\n";
+        cout << "3. Keluar\n";
         cout << "Pilihan: ";
         cin >> pilihan;
-        
+        system("cls");
         switch(pilihan) {
             case 1:
+                system("cls");
                 tambahPasien();
                 break;
-            case 0:
+            case 2: 
+                system("cls");
+                lihatAntrian();
+                system("pause");
+                break;
+            case 3:
                 cout << "Terima kasih telah menggunakan sistem ini.\n";
                 break;
             default:
