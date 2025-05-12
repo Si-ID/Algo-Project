@@ -36,11 +36,35 @@ void tambahPasien(){
     fprintf(file, "Tanggal Lahir: %s\n", pasien.ttl);
     fprintf(file, "Poli: %s\n", pasien.poli);
     fprintf(file, "================================\n");
+
+
+    fclose(file);
+    cout << "\nData pasien Berhasil di simpan!";
     
 }
 
 main(){
-    cout << "Hello World";
-    cout << "test";
-    cout << "test";
+int pilihan;
+    
+    do {
+        cout << "\n===== MENU SISTEM MANAJEMEN PASIEN =====\n";
+        cout << "1. Tambah Pasien\n";
+        cout << "0. Keluar\n";
+        cout << "Pilihan: ";
+        cin >> pilihan;
+        
+        switch(pilihan) {
+            case 1:
+                tambahPasien();
+                break;
+            case 0:
+                cout << "Terima kasih telah menggunakan sistem ini.\n";
+                break;
+            default:
+                cout << "Pilihan tidak valid. Silakan coba lagi.\n";
+        }
+    } while (pilihan != 0);
+    
+    return 0;
+
 }
