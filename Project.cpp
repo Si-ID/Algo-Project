@@ -60,7 +60,7 @@ void tambahPasien(){
     cout << "Poli: "; cin.getline(pasien.poli, 50);
 
     FILE *file;
-    file    = fopen("dataPasien.txt","a"); // Append utk menambahkan data baru
+    file = fopen("dataPasien.txt","a"); // Append utk menambahkan data baru
     
     if (file == NULL)
     {
@@ -82,14 +82,88 @@ void tambahPasien(){
     
 }
 
-main(){
+// Searching atau pencarian berdasarkan nama 
+int searchingPasien(Pasien data[], int x, string nama) {
+    for (int i = 0; i < x; i++) {
+        if (data[i].nama == nama) {
+            return i; 
+        }
+    }
+    return -1; 
+}
+
+void searching_Pasien() {
+    Pasien data[100]; 
+    int pasien = 0; 
+    string cari_nama; 
+
+    FILE *file;
+    file = fopen("dataPasien.txt","r"); // Append utk menambahkan data baru
+    
+    if (file == NULL)
+    {
+        cout << "Error Tidak dapat membuka File!" << endl;
+        return;
+    }  
+
+    char line[200]; 
+
+    while (fgets(line, sizeof(line), file)) {
+        if (strncmp(line, "Nama:", 5) == 0) {
+            strcpy(data[pasien].nama, line + 6); // Lewati "Nama : "
+            data[pasien].nama[strcspn(data[pasien].nama, "\n")] = 0; 
+
+            fgets(line, sizeof(line), file); 
+            strcpy(data[pasien].alamat, line + 8); 
+            data[pasien].alamat[strcspn(data[pasien].alamat, "\n")] = 0; 
+
+            fgets(line, sizeof(line), file); 
+            strcpy(data[pasien].nik, line + 5); 
+            data[pasien].nik[strcspn(data[pasien].nik, "\n")] = 0; 
+
+            fgets(line, sizeof(line), file); 
+            strcpy(data[pasien].ttl, line + 16); 
+            data[pasien].ttl[strcspn(data[pasien].ttl, "\n")] = 0; 
+
+            fgets(line, sizeof(line), file); 
+            strcpy(data[pasien].poli, line + 6); 
+            data[pasien].poli[strcspn(data[pasien].poli, "\n")] = 0; 
+
+            fgets(line, sizeof(line), file); // Baris pemisah "==========="
+            pasien++; 
+        }
+    }
+
+    fclose(file); 
+
+    cin.ignore(); 
+    cout << "Masukkan nama pasien yang akan dicari : "; 
+    getline(cin, cari_nama); 
+    cout << endl; 
+
+    int hasil_nama = searchingPasien(data, pasien, cari_nama); 
+
+    if (hasil_nama != -1) {
+        cout << "Data pasien ditemukan\n"; 
+        cout << "Nama           : " << data[hasil_nama].nama << endl; 
+        cout << "Alamat         : " << data[hasil_nama].alamat << endl;
+        cout << "NIK            : " << data[hasil_nama].nik << endl; 
+        cout << "Tanggal Lahir  : " << data[hasil_nama].ttl << endl;
+        cout << "Poli           : " << data[hasil_nama].poli << endl;
+    } else {
+        cout << "Pasien dengan nama " << cari_nama << " tidak ditemukan\n"; 
+    }
+}
+
+int main(){
 int pilihan;
     
     do {
         cout << "\n===== MENU SISTEM MANAJEMEN PASIEN =====\n";
         cout << "1. Tambah Pasien\n";
         cout << "2. Lihat Antrian\n";
-        cout << "3. Keluar\n";
+        cout << "3. Mencari Data Pasien\n"; 
+        cout << "0. Keluar\n";
         cout << "Pilihan: ";
         cin >> pilihan;
         system("cls");
@@ -103,7 +177,12 @@ int pilihan;
                 lihatAntrian();
                 system("pause");
                 break;
-            case 3:
+            case 3: 
+                system("cls"); 
+                searching_Pasien(); 
+                system("pause"); 
+                break; 
+            case 0:
                 cout << "Terima kasih telah menggunakan sistem ini.\n";
                 break;
             default:
@@ -111,6 +190,5 @@ int pilihan;
         }
     } while (pilihan != 0);
     
-    return 0;
-
+    return 0; 
 }
