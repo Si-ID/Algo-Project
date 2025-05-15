@@ -11,8 +11,6 @@ struct Pasien{
 };
 
 void lihatAntrian(){
-
-
     FILE *file;
     file = fopen("dataPasien.txt","r");
 
@@ -44,8 +42,6 @@ void lihatAntrian(){
     if (nomorPasien == 0) {
         cout << "Belum ada data pasien yang tersimpan.\n";
     }    
-
-    
 }
 
 void tambahPasien(){
@@ -76,10 +72,8 @@ void tambahPasien(){
     fprintf(file, "Poli: %s\n", pasien.poli);
     fprintf(file, "================================\n");
 
-
     fclose(file);
     cout << "\nData pasien Berhasil di simpan!";
-    
 }
 
 // Searching atau pencarian berdasarkan nama 
@@ -92,6 +86,7 @@ int searchingPasien(Pasien data[], int x, string nama) {
     return -1; 
 }
 
+// Searching dengan metode sequential search (linear search)
 void searching_Pasien() {
     Pasien data[100]; 
     int pasien = 0; 
@@ -110,7 +105,7 @@ void searching_Pasien() {
 
     while (fgets(line, sizeof(line), file)) {
         if (strncmp(line, "Nama:", 5) == 0) {
-            strcpy(data[pasien].nama, line + 6); // Lewati "Nama : "
+            strcpy(data[pasien].nama, line + 6); // Lewati "Nama:"
             data[pasien].nama[strcspn(data[pasien].nama, "\n")] = 0; 
 
             fgets(line, sizeof(line), file); 
@@ -122,7 +117,7 @@ void searching_Pasien() {
             data[pasien].nik[strcspn(data[pasien].nik, "\n")] = 0; 
 
             fgets(line, sizeof(line), file); 
-            strcpy(data[pasien].ttl, line + 16); 
+            strcpy(data[pasien].ttl, line + 15); 
             data[pasien].ttl[strcspn(data[pasien].ttl, "\n")] = 0; 
 
             fgets(line, sizeof(line), file); 
@@ -155,6 +150,78 @@ void searching_Pasien() {
     }
 }
 
+// Sorting atau pengurutan berdasarkan nama dengan straight insertion sort 
+int sortingPasien(Pasien arr[], int n) {
+    int i, j; 
+    Pasien key; 
+
+    for (i = 1; i < n; i++) {
+        key = arr[i]; 
+        j = i - 1; 
+        while (j >= 0 && arr[j].nama > key.nama) {
+            arr[j + 1] = arr[j]; 
+            j = j - 1; 
+        }
+        arr[j + 1] = key; 
+    }
+}
+
+void sorting_Pasien() {
+    Pasien data[100]; 
+    int pasien = 0; 
+
+    FILE *file;
+    file = fopen("dataPasien.txt","r"); // Append utk menambahkan data baru
+    
+    if (file == NULL)
+    {
+        cout << "Error Tidak dapat membuka File!" << endl;
+        return;
+    }  
+
+    char line[200]; 
+
+    while (fgets(line, sizeof(line), file)) {
+        if (strncmp(line, "Nama:", 5) == 0) {
+            strcpy(data[pasien].nama, line + 6); // Lewati "Nama:"
+            data[pasien].nama[strcspn(data[pasien].nama, "\n")] = 0; 
+
+            fgets(line, sizeof(line), file); 
+            strcpy(data[pasien].alamat, line + 8); 
+            data[pasien].alamat[strcspn(data[pasien].alamat, "\n")] = 0; 
+
+            fgets(line, sizeof(line), file); 
+            strcpy(data[pasien].nik, line + 5); 
+            data[pasien].nik[strcspn(data[pasien].nik, "\n")] = 0; 
+
+            fgets(line, sizeof(line), file); 
+            strcpy(data[pasien].ttl, line + 15); 
+            data[pasien].ttl[strcspn(data[pasien].ttl, "\n")] = 0; 
+
+            fgets(line, sizeof(line), file); 
+            strcpy(data[pasien].poli, line + 6); 
+            data[pasien].poli[strcspn(data[pasien].poli, "\n")] = 0; 
+
+            fgets(line, sizeof(line), file); // Baris pemisah "==========="
+            pasien++; 
+        }
+    }
+
+    fclose(file); 
+
+    sortingPasien(data, pasien); 
+
+    cout << "\nBerikut adalah data pasien setelah diurutkan berdasarkan nama :\n"; 
+    for (int i = 0; i < pasien; i++) { 
+        cout << "Nama           : " << data[i].nama << endl; 
+        cout << "Alamat         : " << data[i].alamat << endl;
+        cout << "NIK            : " << data[i].nik << endl; 
+        cout << "Tanggal Lahir  : " << data[i].ttl << endl;
+        cout << "Poli           : " << data[i].poli << endl;
+        cout << "================================" << endl; 
+    }
+}
+
 int main(){
 int pilihan;
     
@@ -163,6 +230,7 @@ int pilihan;
         cout << "1. Tambah Pasien\n";
         cout << "2. Lihat Antrian\n";
         cout << "3. Mencari Data Pasien\n"; 
+        cout << "4. Mengurutkan Data Pasien\n"; 
         cout << "0. Keluar\n";
         cout << "Pilihan: ";
         cin >> pilihan;
@@ -180,6 +248,11 @@ int pilihan;
             case 3: 
                 system("cls"); 
                 searching_Pasien(); 
+                system("pause"); 
+                break; 
+            case 4: 
+                system("cls"); 
+                sorting_Pasien(); 
                 system("pause"); 
                 break; 
             case 0:
