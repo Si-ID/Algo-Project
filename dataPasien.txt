@@ -1,12 +1,12 @@
 Nama: Novaldo Putra
 Alamat: Bantul
 NIK: 124240110
-Tanggal Lahir: 27/11/2005
+TTL: 
 Poli: THT
 ================================
-Nama: Chairun Feyza
-Alamat: Klaten
-NIK: 124240105
-Tanggal Lahir: 27/03/2006
-Poli: Anak
+Nama: Laura Putri
+Alamat: Sleman
+NIK: 124240450
+TTL: 3 Mei 2004
+Poli: Gigi
 ================================
