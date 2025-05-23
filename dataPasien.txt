@@ -1,12 +1,12 @@
 Nama: Novaldo Putra
 Alamat: Bantul
 NIK: 124240110
-TTL: 
+TTL: 20/11/2005
 Poli: THT
 ================================
-Nama: Laura Putri
-Alamat: Sleman
-NIK: 124240450
-TTL: 3 Mei 2004
-Poli: Gigi
+Nama: Udin Petot
+Alamat: Nganjuk
+NIK: 124240100
+TTL: 01/01/2006
+Poli: GIGI
 ================================

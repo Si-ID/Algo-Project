@@ -35,7 +35,7 @@ void inputDataPasien(PtrPasien pasien) {
     cout << "Masukkan NIK Pasien: ";
     cin.getline(pasien->nik, 20);
     
-    cout << "Masukkan Tanggal Lahir Pasien: ";
+    cout << "Masukkan Tanggal Lahir Pasien: (format DD/MM/YYYY) ";
     cin.getline(pasien->ttl, 20);
     
     cout << "Masukkan Poli yang dituju: ";
@@ -215,32 +215,100 @@ void muatDataPasienDariFile(PtrPasien &head) {
     fclose(file);
 } 
 
-// Fungsi untuk melakukan sorting atau pengurutan berdasarkan nama menggunakan bubble sort 
-void bubbleSortNama(PtrPasien &head) {
-    if (head == NULL) return; 
+// Fungsi untuk mengkonversi tanggal DD/MM/YYYY ke format yang bisa dibandingkan (YYYYMMDD)
+int konversiTanggal(const char* tanggal) {
+    int hari, bulan, tahun;
+    sscanf(tanggal, "%d/%d/%d", &hari, &bulan, &tahun);
+    return tahun * 10000 + bulan * 100 + hari;
+}
+
+// Fungsi untuk melakukan sorting berdasarkan nama menggunakan Selection Sort
+void selectionSortNama(PtrPasien &head) {
+    if (head == NULL) return;
+
+    PtrPasien current = head;
+
+    while (current != NULL) {
+        PtrPasien minNode = current;
+        PtrPasien temp = current->next;
+
+        // Mencari node dengan nama terkecil dari current hingga akhir
+        while (temp != NULL) {
+            if (strcmp(temp->nama, minNode->nama) < 0) {
+                minNode = temp;
+            }
+            temp = temp->next;
+        }
+
+        // Menukar data jika ditemukan node dengan nama yang lebih kecil
+        if (minNode != current) {
+            swap(current->nama, minNode->nama);
+            swap(current->alamat, minNode->alamat);
+            swap(current->nik, minNode->nik);
+            swap(current->ttl, minNode->ttl);
+            swap(current->poli, minNode->poli);
+        }
+
+        current = current->next;
+    }
+}
+
+// Fungsi untuk melakukan sorting berdasarkan tanggal lahir menggunakan Insertion Sort
+void insertionSortTanggal(PtrPasien &head) {
+    if (head == NULL || head->next == NULL) return;
+
+    PtrPasien sorted = NULL; // Head dari list yang sudah terurut
+    PtrPasien current = head;
+
+    while (current != NULL) {
+        PtrPasien next = current->next; // Simpan node berikutnya
+        
+        // Jika sorted list kosong atau current harus ditempatkan di awal
+        if (sorted == NULL || konversiTanggal(current->ttl) < konversiTanggal(sorted->ttl)) {
+            current->next = sorted;
+            sorted = current;
+        } else {
+            // Cari posisi yang tepat untuk memasukkan current
+            PtrPasien temp = sorted;
+            while (temp->next != NULL && konversiTanggal(temp->next->ttl) < konversiTanggal(current->ttl)) {
+                temp = temp->next;
+            }
+            current->next = temp->next;
+            temp->next = current;
+        }
+        
+        current = next;
+    }
+    
+    head = sorted; // Update head pointer
+}
+
+// Fungsi untuk melakukan sorting berdasarkan poli menggunakan bubble sort
+void bubbleSortPoli(PtrPasien &head) {
+    if (head == NULL) return;
 
     bool swapped;
-    PtrPasien ptr; 
-    PtrPasien lastSorted = NULL;  
+    PtrPasien ptr;
+    PtrPasien lastSorted = NULL;
 
     do {
-        swapped = false; 
-        ptr = head; 
+        swapped = false;
+        ptr = head;
 
         while (ptr->next != lastSorted) {
-            if (strcmp(ptr->nama, ptr->next->nama) > 0) {
-                // Untuk menukar seluruh data pasien 
-                swap(ptr->nama, ptr->next->nama); 
-                swap(ptr->alamat, ptr->next->alamat); 
-                swap(ptr->nik, ptr->next->nik); 
-                swap(ptr->ttl, ptr->next->ttl); 
-                swap(ptr->poli, ptr->next->poli); 
-                swapped = true; 
-            } 
-            ptr = ptr->next; 
+            if (strcmp(ptr->poli, ptr->next->poli) > 0) {
+                // Menukar seluruh data pasien
+                swap(ptr->nama, ptr->next->nama);
+                swap(ptr->alamat, ptr->next->alamat);
+                swap(ptr->nik, ptr->next->nik);
+                swap(ptr->ttl, ptr->next->ttl);
+                swap(ptr->poli, ptr->next->poli);
+                swapped = true;
+            }
+            ptr = ptr->next;
         }
-        lastSorted = ptr; 
-    } while (swapped); 
+        lastSorted = ptr;
+    } while (swapped);
 }
 
 // Fungsi untuk menampilkan isi linked list 
@@ -308,6 +376,50 @@ void menghapusPasien(PtrPasien &head) {
     simpanSeluruhDataKeFile(head); 
 }
 
+// Fungsi menu sorting dengan berbagai algoritma
+void menuSorting(PtrPasien &head) {
+    int pilihanSort;
+    
+    do {
+        cout << "\n<==== MENU SORTING DATA PASIEN ====>" << endl;
+        cout << "\n1. Urutkan berdasarkan Nama (Selection Sort)" << endl;
+        cout << "2. Urutkan berdasarkan Tanggal Lahir (Insertion Sort)" << endl;
+        cout << "3. Urutkan berdasarkan Poli (Bubble Sort)" << endl;
+        cout << "0. Kembali ke Menu Utama" << endl;
+        cout << "Pilihan : ";
+        cin >> pilihanSort;
+        
+        switch (pilihanSort) {
+            case 1:
+                system("cls");
+                cout << "Mengurutkan data berdasarkan nama menggunakan Selection Sort..." << endl;
+                selectionSortNama(head);
+                tampilkanDataDariLinkedList(head);
+                system("pause");
+                break;
+            case 2:
+                system("cls");
+                cout << "Mengurutkan data berdasarkan tanggal lahir menggunakan Insertion Sort..." << endl;
+                insertionSortTanggal(head);
+                tampilkanDataDariLinkedList(head);
+                system("pause");
+                break;
+            case 3:
+                system("cls");
+                cout << "Mengurutkan data berdasarkan poli menggunakan Bubble Sort..." << endl;
+                bubbleSortPoli(head);
+                tampilkanDataDariLinkedList(head);
+                system("pause");
+                break;
+            case 0:
+                cout << "Kembali ke menu utama..." << endl;
+                break;
+            default:
+                cout << "\nPilihan tidak valid.\n" << endl;
+        }
+    } while (pilihanSort != 0);
+}
+
 int main() {
     PtrPasien headPasien = NULL;
     muatDataPasienDariFile(headPasien); 
@@ -318,7 +430,7 @@ int main() {
         cout << "\n1. Tambah Data Pasien" << endl;
         cout << "2. Tampilkan Semua Data Pasien" << endl;
         cout << "3. Mencari Data Pasien" << endl; 
-        cout << "4. Mengurutkan Data Pasien" << endl; 
+        cout << "4. Menu Sorting Data Pasien" << endl; 
         cout << "5. Menghapus Data Pasien" << endl; 
         cout << "0. Keluar" << endl;
         cout << "Pilihan : ";
@@ -346,9 +458,7 @@ int main() {
                 break; 
             case 4:
                 system("cls"); 
-                bubbleSortNama(headPasien); 
-                tampilkanDataDariLinkedList(headPasien); 
-                system("pause"); 
+                menuSorting(headPasien);
                 break; 
             case 5: 
                 system("cls"); 
